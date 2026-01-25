@@ -1,0 +1,78 @@
+<div class="book-details-container">
+  <div class="header">
+    <h2>פרטי הספר</h2>
+    <div class="header-actions">
+      @if (book) {
+        <button (click)="onEdit()" class="btn btn-primary">עריכה</button>
+      }
+      <button (click)="onBack()" class="btn btn-secondary">חזרה</button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading">
+      טוען נתונים...
+    </div>
+  }
+
+  @if (!loading && book) {
+    <div class="book-card">
+    <div class="book-info">
+      <div class="info-row">
+        <div class="info-item">
+          <label>כותרת:</label>
+          <span class="value">{{ book.Title }}</span>
+        </div>
+        <div class="info-item">
+          <label>מחבר:</label>
+          <span class="value">{{ book.Author }}</span>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-item">
+          <label>קטגוריה:</label>
+          <span class="value">{{ book.Category }}</span>
+        </div>
+        <div class="info-item">
+          <label>שנת הוצאה:</label>
+          <span class="value">{{ book.PublishYear }}</span>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-item">
+          <label>סטטוס:</label>
+          <span class="value status" [class]="'status-' + book.StatusId">{{ getStatusName(book.StatusId) }}</span>
+        </div>
+        <div class="info-item">
+          <label>עותקים זמינים:</label>
+          <span class="value">{{ book.AvailableCopies }}</span>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-item full-width">
+          <label>מיקום:</label>
+          <span class="value">{{ getLocationName(book.LocationId) }}</span>
+        </div>
+      </div>
+
+      @if (book.Description) {
+        <div class="info-row">
+          <div class="info-item full-width">
+            <label>תיאור:</label>
+            <p class="description">{{ book.Description }}</p>
+          </div>
+        </div>
+      }
+    </div>
+    </div>
+  }
+
+  @if (!loading && !book) {
+    <div class="error">
+      לא נמצא ספר עם מזהה זה
+    </div>
+  }
+</div>
