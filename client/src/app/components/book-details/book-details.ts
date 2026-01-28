@@ -34,10 +34,7 @@ export class BookDetailsComponent implements OnInit {
   loadData(): void {
     this.loading = true;
     
-    // קודם טוען את הספר, אחר כך סטטוסים ומיקומים
     this.loadBook();
-    
-    // טוען סטטוסים ומיקומים ברקע
     this.apiService.getStatuses().subscribe({
       next: (statuses) => {
         this.statuses = statuses || [];

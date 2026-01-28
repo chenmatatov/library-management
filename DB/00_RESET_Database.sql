@@ -2,32 +2,26 @@ IF EXISTS (SELECT name FROM sys.databases WHERE name = 'LibraryDB')
 BEGIN
     ALTER DATABASE LibraryDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
     DROP DATABASE LibraryDB;
-    PRINT 'מסד נתונים LibraryDB נמחק';
 END
 
--- יצירת מסד נתונים חדש
 CREATE DATABASE LibraryDB;
-PRINT 'מסד נתונים LibraryDB נוצר מחדש';
 GO
 
 USE LibraryDB;
 GO
 
--- יצירת טבלת סטטוסים
 CREATE TABLE Statuses (
     ID INT PRIMARY KEY, 
     Name VARCHAR(100),   
     Description VARCHAR(999)  
 );
 
--- יצירת טבלת מיקומים
 CREATE TABLE Locations (
     ID INT PRIMARY KEY,           
     LocationName VARCHAR(255),     
     Description TEXT             
 );
 
--- יצירת טבלת ספרים
 CREATE TABLE Books (
     ID INT PRIMARY KEY,
     Title VARCHAR(255),
@@ -43,7 +37,6 @@ CREATE TABLE Books (
     FOREIGN KEY (StatusId) REFERENCES Statuses(ID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- יצירת טבלת השאלות
 CREATE TABLE Borrowings (
     ID INT PRIMARY KEY, 
     MemberID INT,
@@ -54,13 +47,11 @@ CREATE TABLE Borrowings (
     FOREIGN KEY (BookID) REFERENCES Books(ID) ON DELETE CASCADE ON UPDATE CASCADE 
 );
 
--- הכנסת סטטוסים
 INSERT INTO Statuses (ID, Name, Description) VALUES
 (1, 'זמין', 'הספר זמין להשאלה'),
 (2, 'לא זמין', 'הספר לא זמין להשאלה'),
 (3, 'ממתין להשאלה', 'הספר נמצא בתור להשאלה');
 
--- הכנסת מיקומים
 INSERT INTO Locations (ID, LocationName, Description) VALUES
 (1, 'מדף ספרי קודש', 'מדף בו נמצאים ספרי קודש כמו תורניות'),
 (2, 'מדף ספרי חינוך', 'מדף בו נמצאים ספרי חינוך והדרכה'),
@@ -69,7 +60,6 @@ INSERT INTO Locations (ID, LocationName, Description) VALUES
 (5, 'מדף ספרי קריאה', 'מדף עם ספרי קריאה כלליים'),
 (6, 'חדר קריאה', 'חדר בו ניתן לשבת ולקרוא ספרים');
 
--- הכנסת ספרים
 INSERT INTO Books (ID, Title, Author, Category, Description, StatusId, PublishYear, AvailableCopies, LocationId) VALUES
 (1, 'תניא', 'רבי שניאור זלמן', 'ספרי קודש', 'ספר יסוד חסידי, ספר תורת החסידות', 1, 1800, 5, 4),
 (2, 'חומש עם תרגום', 'רבי חיים עוזר', 'ספרי קודש', 'חומש עם תרגום ופרשנות', 1, 1940, 10, 1),
@@ -91,7 +81,6 @@ INSERT INTO Books (ID, Title, Author, Category, Description, StatusId, PublishYe
 (18, 'לימוד תורה לילדים', 'חיים חיים', 'ספרי ילדים', 'ספר לימוד שמיועד לילדים בגילאי 6-9', 1, 2007, 15, 3),
 (19, 'ההתחלה מחדש', 'רבי נתן', 'ספרי קריאה', 'ספר אישי שמסביר על הדרך להתחיל מחדש על פי תורה', 2, 2018, 10, 5);
 
--- בדיקות
 SELECT COUNT(*) AS BooksCount FROM Books;
 SELECT COUNT(*) AS StatusesCount FROM Statuses;
 SELECT COUNT(*) AS LocationsCount FROM Locations;

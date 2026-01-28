@@ -19,8 +19,7 @@ export class BookFormComponent implements OnInit {
   loading = false;
   statuses: any[] = [];
   locations: any[] = [];
-  
-  // הודעות
+
   showNotification = false;
   notificationMessage = '';
   notificationType: 'success' | 'error' | 'info' = 'success';
@@ -54,16 +53,15 @@ export class BookFormComponent implements OnInit {
 
   loadData() {
     this.loading = true;
-    
-    // טוען סטטוסים ומיקומים
+
     this.apiService.getStatuses().subscribe({
       next: (statuses) => {
         this.statuses = statuses || [];
-        
+
         this.apiService.getLocations().subscribe({
           next: (locations) => {
             this.locations = locations || [];
-            
+
             if (this.isEdit) {
               this.loadBook();
             } else {
@@ -71,7 +69,6 @@ export class BookFormComponent implements OnInit {
             }
           },
           error: (error) => {
-            console.error('Error loading locations:', error);
             this.locations = [];
             if (this.isEdit) {
               this.loadBook();
@@ -82,7 +79,6 @@ export class BookFormComponent implements OnInit {
         });
       },
       error: (error) => {
-        console.error('Error loading statuses:', error);
         this.statuses = [];
         this.locations = [];
         if (this.isEdit) {
@@ -104,22 +100,16 @@ export class BookFormComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading book:', error);
         this.loading = false;
       }
     });
   }
 
   showMessage(message: string, type: 'success' | 'error' | 'info' = 'success'): void {
-    console.log('Showing message:', message, type);
-    console.log('showNotification before:', this.showNotification);
     this.notificationMessage = message;
     this.notificationType = type;
     this.showNotification = true;
-    this.cdr.detectChanges(); // כפיית עדכון
-    console.log('showNotification after:', this.showNotification);
-    console.log('notificationMessage:', this.notificationMessage);
-    console.log('notificationType:', this.notificationType);
+    this.cdr.detectChanges();
   }
 
   onNotificationClose(): void {
@@ -131,46 +121,35 @@ export class BookFormComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log('onSubmit called');
-    console.log('Form valid:', this.bookForm.valid);
-    
     if (this.bookForm.valid) {
       this.loading = true;
       const bookData = { ...this.bookForm.value };
-      console.log('Book data:', bookData);
-      
+
       if (this.isEdit && this.bookId) {
         bookData.BookId = this.bookId;
-        console.log('Updating book with ID:', this.bookId);
         this.apiService.updateBook(bookData).subscribe({
           next: () => {
-            console.log('Book updated successfully');
             this.loading = false;
             this.showMessage('הספר עודכן בהצלחה! 🎉', 'success');
           },
           error: (error) => {
-            console.error('Error updating book:', error);
             this.showMessage('שגיאה בעדכון הספר ❌', 'error');
             this.loading = false;
           }
         });
       } else {
-        console.log('Creating new book');
         this.apiService.createBook(bookData).subscribe({
           next: () => {
-            console.log('Book created successfully');
             this.loading = false;
             this.showMessage('הספר נוסף בהצלחה! 🎉', 'success');
           },
           error: (error) => {
-            console.error('Error creating book:', error);
             this.showMessage('שגיאה בהוספת הספר ❌', 'error');
             this.loading = false;
           }
         });
       }
     } else {
-      console.log('Form is invalid');
       this.showMessage('אנא מלא את כל השדות החובה ⚠️', 'error');
     }
   }

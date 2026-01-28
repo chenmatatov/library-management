@@ -14,7 +14,6 @@
 
   @if (books.length > 0) {
     <div>
-    <!-- טבלה לדסקטופ -->
     <table class="books-table">
       <thead>
         <tr>
@@ -45,7 +44,6 @@
       </tbody>
     </table>
 
-    <!-- כרטיסים למובייל -->
     <div class="books-mobile">
       @for (book of books; track trackByBookId($index, book)) {
         <div class="book-card">

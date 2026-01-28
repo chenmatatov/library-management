@@ -3,14 +3,18 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Text.Json;
 
-
-namespace LibararyAPI.Controllers
+namespace LibraryAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class ExecuteController : ControllerBase
     {
-        private readonly string _connectionString = "Server=localhost\\SQLEXPRESS;Database=LibraryDB;Integrated Security=true;TrustServerCertificate=true;";
+        private readonly IConfiguration _configuration;
+
+        public ExecuteController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         [HttpGet]
         public IActionResult Get()
@@ -23,38 +27,31 @@ namespace LibararyAPI.Controllers
         {
             try
             {
-                using var connection = new SqlConnection(_connectionString);
-                using var command = new SqlCommand(request.ProcedureName, connection);
-                command.CommandType = CommandType.StoredProcedure;
+                var connectionString = _configuration.GetConnectionString("DefaultConnection");
 
-                // הוסף פרמטרים
-                // הוסף פרמטרים
+                using var connection = new SqlConnection(connectionString);
+                using var command = new SqlCommand(request.ProcedureName, connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
                 foreach (var param in request.Parameters)
                 {
                     object value = param.Value;
 
-                    // תקן JsonElement
-                    if (param.Value is JsonElement jsonElement)
+                    if (value is JsonElement jsonElement)
                     {
-                        value = jsonElement.ValueKind switch
-                        {
-                            JsonValueKind.String => jsonElement.GetString(),
-                            JsonValueKind.Number => jsonElement.GetInt32(),
-                            JsonValueKind.True => true,
-                            JsonValueKind.False => false,
-                            JsonValueKind.Null => DBNull.Value,
-                            _ => jsonElement.ToString()
-                        };
+                        value = ConvertJsonElement(jsonElement);
                     }
 
                     command.Parameters.AddWithValue($"@{param.Key}", value ?? DBNull.Value);
                 }
 
                 await connection.OpenAsync();
-                
-                var result = new List<Dictionary<string, object>>();
+
+                var results = new List<Dictionary<string, object>>();
                 using var reader = await command.ExecuteReaderAsync();
-                
+
                 while (await reader.ReadAsync())
                 {
                     var row = new Dictionary<string, object>();
@@ -62,15 +59,28 @@ namespace LibararyAPI.Controllers
                     {
                         row[reader.GetName(i)] = reader.IsDBNull(i) ? null! : reader.GetValue(i);
                     }
-                    result.Add(row);
+                    results.Add(row);
                 }
 
-                return Ok(result);
+                return Ok(results);
             }
             catch (Exception ex)
             {
                 return BadRequest(new { error = ex.Message });
             }
+        }
+
+        private object ConvertJsonElement(JsonElement element)
+        {
+            return element.ValueKind switch
+            {
+                JsonValueKind.String => element.GetString(),
+                JsonValueKind.Number => element.TryGetInt32(out int intValue) ? intValue : element.GetDouble(),
+                JsonValueKind.True => true,
+                JsonValueKind.False => false,
+                JsonValueKind.Null => null,
+                _ => element.ToString()
+            };
         }
     }
 

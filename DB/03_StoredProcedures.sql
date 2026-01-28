@@ -1,7 +1,6 @@
 USE LibraryDB;
 GO
 
--- שליפת ספר לפי ID
 CREATE PROCEDURE Books_GetById
     @Id INT = 1
 AS
@@ -25,7 +24,6 @@ BEGIN
 END
 GO
 
--- שליפת כל הספרים עם חיפוש
 CREATE PROCEDURE Books_GetAll
     @SearchText VARCHAR(255) = NULL
 AS
@@ -48,7 +46,6 @@ BEGIN
 END
 GO
 
--- יצירת ספר חדש
 CREATE PROCEDURE Books_Create
     @Title VARCHAR(255),
     @Author VARCHAR(255),
@@ -67,7 +64,6 @@ BEGIN
 END
 GO
 
--- עדכון ספר קיים
 CREATE PROCEDURE UpdateBook
     @BookId INT,
     @Title VARCHAR(255),
@@ -94,7 +90,6 @@ BEGIN
 END
 GO
 
--- מחיקת ספר
 CREATE PROCEDURE DeleteBook
     @BookId INT
 AS
@@ -104,7 +99,6 @@ BEGIN
 END
 GO
 
--- שינוי סטטוס ספר
 CREATE PROCEDURE ChangeStatus
     @BookID INT,
     @NewStatusID INT
@@ -116,7 +110,6 @@ BEGIN
 END
 GO
 
--- שליפת כל הסטטוסים
 CREATE PROCEDURE Statuses_GetAll
 AS
 BEGIN
@@ -125,7 +118,6 @@ BEGIN
 END
 GO
 
--- שליפת כל המיקומים
 CREATE PROCEDURE Locations_GetAll
 AS
 BEGIN
@@ -134,7 +126,6 @@ BEGIN
 END
 GO
 
--- בדיקות והרצות
 EXEC Books_GetAll;
 EXEC Statuses_GetAll;
 EXEC Locations_GetAll;
