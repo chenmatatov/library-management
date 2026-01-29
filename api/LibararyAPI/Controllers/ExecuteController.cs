@@ -27,13 +27,9 @@ namespace LibararyAPI.Controllers
                 using var command = new SqlCommand(request.ProcedureName, connection);
                 command.CommandType = CommandType.StoredProcedure;
 
-                // ���� �������
-                // ���� �������
                 foreach (var param in request.Parameters)
                 {
                     object value = param.Value;
-
-                    // ��� JsonElement
                     if (param.Value is JsonElement jsonElement)
                     {
                         value = jsonElement.ValueKind switch

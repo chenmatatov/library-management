@@ -1,20 +1,6 @@
 ﻿USE LibraryDB;
 GO
 
-IF OBJECT_ID('Books_GetById', 'P') IS NOT NULL DROP PROCEDURE Books_GetById;
-IF OBJECT_ID('Books_GetAll', 'P') IS NOT NULL DROP PROCEDURE Books_GetAll;
-IF OBJECT_ID('Books_Create', 'P') IS NOT NULL DROP PROCEDURE Books_Create;
-IF OBJECT_ID('UpdateBook', 'P') IS NOT NULL DROP PROCEDURE UpdateBook;
-IF OBJECT_ID('DeleteBook', 'P') IS NOT NULL DROP PROCEDURE DeleteBook;
-IF OBJECT_ID('ChangeStatus', 'P') IS NOT NULL DROP PROCEDURE ChangeStatus;
-IF OBJECT_ID('Statuses_GetAll', 'P') IS NOT NULL DROP PROCEDURE Statuses_GetAll;
-IF OBJECT_ID('Locations_GetAll', 'P') IS NOT NULL DROP PROCEDURE Locations_GetAll;
-IF OBJECT_ID('GetAllCategories', 'P') IS NOT NULL DROP PROCEDURE GetAllCategories;
-GO
-
-
-
--- Books_GetById
 CREATE PROCEDURE Books_GetById
     @Id INT
 AS
@@ -38,8 +24,7 @@ BEGIN
 END
 GO
 
--- Books_GetAll (כולל חיפוש)
-CREATE PROCEDURE Books_GetAll
+CREATE OR ALTER PROCEDURE Books_GetAll
     @SearchText NVARCHAR(255) = NULL
 AS
 BEGIN
@@ -54,7 +39,8 @@ BEGIN
         b.StatusId,
         s.Name AS StatusName,
         b.LocationId,
-        l.LocationName
+        l.LocationName,
+        b.CreatedAt  -- <-- הוספתי את CreatedAt
     FROM Books b
     LEFT JOIN Statuses s ON b.StatusId = s.ID
     LEFT JOIN Locations l ON b.LocationId = l.ID
@@ -67,7 +53,7 @@ BEGIN
 END
 GO
 
--- Books_Create
+
 CREATE OR ALTER PROCEDURE Books_Create
     @Title NVARCHAR(255),
     @Author NVARCHAR(255),
@@ -88,7 +74,6 @@ GO
 
 
 
--- UpdateBook
 CREATE PROCEDURE UpdateBook
     @BookId INT,
     @Title NVARCHAR(255),
@@ -115,7 +100,6 @@ BEGIN
 END
 GO
 
--- DeleteBook
 CREATE PROCEDURE DeleteBook
     @BookId INT
 AS
@@ -125,7 +109,6 @@ BEGIN
 END
 GO
 
--- ChangeStatus
 CREATE PROCEDURE ChangeStatus
     @BookID INT,
     @NewStatusID INT
@@ -137,7 +120,6 @@ BEGIN
 END
 GO
 
--- Statuses_GetAll
 CREATE PROCEDURE Statuses_GetAll
 AS
 BEGIN
@@ -146,7 +128,6 @@ BEGIN
 END
 GO
 
--- Locations_GetAll
 CREATE PROCEDURE Locations_GetAll
 AS
 BEGIN
@@ -155,7 +136,6 @@ BEGIN
 END
 GO
 
--- GetAllCategories
 CREATE PROCEDURE GetAllCategories
 AS
 BEGIN
@@ -189,19 +169,15 @@ EXEC Books_Create @Title=N'ההתחלה מחדש', @Author=N'רבי נתן', @Ca
 GO
 
 
--- 2️⃣ שליפת ספר לפי ID
 EXEC Books_GetById @Id = 1;
 GO
 
--- 3️⃣ שליפת כל הספרים
 EXEC Books_GetAll;
 GO
 
--- 4️⃣ חיפוש ספרים לפי טקסט
 EXEC Books_GetAll @SearchText = N'נתן';
 GO
 
--- 5️⃣ עדכון ספר קיים
 EXEC UpdateBook
     @BookId = 1,
     @Title = N'ספר לדוגמה - מעודכן',
@@ -214,26 +190,20 @@ EXEC UpdateBook
     @LocationId = 1;
 GO
 
--- 6️⃣ שינוי סטטוס ספר
 EXEC ChangeStatus @BookID = 1, @NewStatusID = 3;
 GO
 
--- 7️⃣ שליפת כל הסטטוסים
 EXEC Statuses_GetAll;
 GO
 
--- 8️⃣ שליפת כל המיקומים
 EXEC Locations_GetAll;
 GO
 
--- 9️⃣ שליפת כל הקטגוריות
 EXEC GetAllCategories;
 GO
 
--- 🔟 מחיקת ספר
 EXEC DeleteBook @BookId = 1;
 GO
 
--- 1️⃣1️⃣ בדיקה שהספר נמחק
 EXEC Books_GetAll;
 GO
