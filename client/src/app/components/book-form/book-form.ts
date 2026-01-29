@@ -17,6 +17,7 @@ export class BookFormComponent implements OnInit {
   isEdit = false;
   bookId?: number;
   loading = false;
+
   statuses: any[] = [];
   locations: any[] = [];
 
@@ -61,7 +62,6 @@ export class BookFormComponent implements OnInit {
         this.apiService.getLocations().subscribe({
           next: (locations) => {
             this.locations = locations || [];
-
             if (this.isEdit) {
               this.loadBook();
             } else {
@@ -121,36 +121,38 @@ export class BookFormComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.bookForm.valid) {
-      this.loading = true;
-      const bookData = { ...this.bookForm.value };
-
-      if (this.isEdit && this.bookId) {
-        bookData.BookId = this.bookId;
-        this.apiService.updateBook(bookData).subscribe({
-          next: () => {
-            this.loading = false;
-            this.showMessage('הספר עודכן בהצלחה! 🎉', 'success');
-          },
-          error: (error) => {
-            this.showMessage('שגיאה בעדכון הספר ❌', 'error');
-            this.loading = false;
-          }
-        });
-      } else {
-        this.apiService.createBook(bookData).subscribe({
-          next: () => {
-            this.loading = false;
-            this.showMessage('הספר נוסף בהצלחה! 🎉', 'success');
-          },
-          error: (error) => {
-            this.showMessage('שגיאה בהוספת הספר ❌', 'error');
-            this.loading = false;
-          }
-        });
-      }
-    } else {
+    if (!this.bookForm.valid) {
       this.showMessage('אנא מלא את כל השדות החובה ⚠️', 'error');
+      return;
+    }
+
+    this.loading = true;
+    const bookData = { ...this.bookForm.value };
+
+    if (this.isEdit && this.bookId) {
+      bookData.BookId = this.bookId;
+
+      this.apiService.updateBook(bookData).subscribe({
+        next: () => {
+          this.loading = false;
+          this.showMessage('הספר עודכן בהצלחה! 🎉', 'success');
+        },
+        error: () => {
+          this.showMessage('שגיאה בעדכון הספר ❌', 'error');
+          this.loading = false;
+        }
+      });
+    } else {
+      this.apiService.createBook(bookData).subscribe({
+        next: () => {
+          this.loading = false;
+          this.showMessage('הספר נוסף בהצלחה! 🎉', 'success');
+        },
+        error: () => {
+          this.showMessage('שגיאה בהוספת הספר ❌', 'error');
+          this.loading = false;
+        }
+      });
     }
   }
 

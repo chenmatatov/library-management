@@ -1,21 +1,15 @@
 # מערכת ניהול ספרייה 📚
-# מגישות שירה מרנשטיין רבקה לבלנק וחן מטאטוב
+
 ## תיאור הפרויקט
 מערכת ניהול ספרייה מתקדמת הבנויה עם Angular ו-.NET Core, המאפשרת ניהול יעיל של ספרים, מיקומים וסטטוסים.
+
+**מגישות:** שירה מרנשטיין, רבקה לבלנק וחן מטאטוב
 
 ## טכנולוגיות
 - **Frontend**: Angular 17+ עם TypeScript
 - **Backend**: .NET Core Web API
 - **Database**: SQL Server
 - **UI**: CSS3 עם Responsive Design
-
-## תכונות עיקריות
-✅ הצגת רשימת ספרים עם חיפוש מתקדם  
-✅ הוספה ועריכה של ספרים  
-✅ צפייה בפרטי ספר מלאים  
-✅ ניהול סטטוסים ומיקומים דינמי  
-✅ ממשק משתמש רספונסיבי  
-✅ ולידציה מתקדמת בטפסים  
 
 ## מבנה מסד הנתונים
 
@@ -44,19 +38,32 @@ ID, LocationName, Description
 - `Books_GetAll` - שליפת כל הספרים + חיפוש
 - `Statuses_GetAll` - שליפת כל הסטטוסים
 - `Locations_GetAll` - שליפת כל המיקומים
+- `ChangeStatus` - שינוי סטטוס ספר
+- `DeleteBook` - מחיקת ספר
 
 ## הרצת הפרויקט
 
-### שרת Backend:
-1. פתח את `api/LibraryAPI/LibraryAPI.sln` ב-Visual Studio
-2. הגדר connection string במסד הנתונים
-3. הרץ את הפרויקט (F5)
-4. השרת יעלה על: `https://localhost:7141`
+### 1. הכנת מסד הנתונים:
+```sql
+-- הרץ את הקבצים בסדר הבא:
+1. DB/00_RESET_Database.sql
+2. DB/03_StoredProcedures.sql
+```
 
-### לקוח Frontend:
-1. נווט לתיקיית `client/`
-2. הרץ: `ng serve`
-3. פתח דפדפן: `http://localhost:4200`
+### 2. שרת Backend:
+```bash
+cd api/LibararyAPI
+dotnet run
+```
+השרת יעלה על: `https://localhost:7141`
+
+### 3. לקוח Frontend:
+```bash
+cd client
+npm install
+ng serve
+```
+פתח דפדפן: `http://localhost:4200`
 
 ## מסכי המערכת
 
@@ -78,31 +85,59 @@ ID, LocationName, Description
 - כפתורי עריכה וחזרה
 - טעינה דינמית של נתונים
 
-## מאפיינים טכניים
+## ארכיטקטורה
 
-### Frontend:
-- **Angular 17+** עם Control Flow החדש (@if, @for)
-- **TypeScript** עם typing מלא
-- **Reactive Forms** עם ולידציה
+### Backend (.NET Core):
+- **Controller יחיד**: `ExecuteController`
+- **Endpoint יחיד**: `POST /api/exec`
+- **מודל Request**:
+```json
+{
+  "procedureName": "Books_GetById",
+  "parameters": {
+    "id": 5
+  }
+}
+```
+
+### Frontend (Angular):
+- **Service יחיד**: `ApiService` - מתקשר רק עם `/api/exec`
+- **3 קומפוננטים**: book-list, book-form, book-details
+- **Reactive Forms** עם ולידציה מלאה
 - **RxJS** לניהול נתונים אסינכרוני
-- **CSS Grid & Flexbox** לעיצוב רספונסיבי
-
-### Backend:
-- **.NET Core Web API** עם ארכיטקטורה נקייה
-- **Entity Framework** או **ADO.NET** לגישה למסד נתונים
-- **Stored Procedures** לביצועים מיטביים
-- **CORS** מוגדר לפיתוח
 
 ## מבנה הפרויקט
 ```
-mini_project/
+library-management/
 ├── client/                 # Angular Frontend
 │   ├── src/app/
 │   │   ├── components/     # קומפוננטים
 │   │   ├── services/       # שירותים
 │   │   └── models/         # מודלים
-│   └── ...
 ├── api/                    # .NET Backend
-│   └── LibraryAPI/
+│   └── LibararyAPI/
+├── DB/                     # SQL Scripts
+│   ├── 00_RESET_Database.sql
+│   └── 03_StoredProcedures.sql
 └── README.md
 ```
+
+## תכונות עיקריות
+✅ הצגת רשימת ספרים עם חיפוש מתקדם  
+✅ הוספה ועריכה של ספרים  
+✅ צפייה בפרטי ספר מלאים  
+✅ ניהול סטטוסים ומיקומים דינמי  
+✅ ממשק משתמש רספונסיבי  
+✅ ולידציה מתקדמת בטפסים  
+✅ ארכיטקטורה נקייה עם Stored Procedures בלבד
+
+## דרישות מערכת
+- Node.js 18+
+- .NET Core 8+
+- SQL Server
+- Angular CLI
+
+## הערות פיתוח
+- כל התקשורת עם מסד הנתונים מתבצעת באמצעות Stored Procedures בלבד
+- ה-API משמש כ"צינור" בין Angular ל-SQL Server
+- הקוד נקי ומותאם לסטנדרטים של Angular ו-.NET

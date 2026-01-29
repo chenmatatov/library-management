@@ -1,15 +1,16 @@
 export interface Book {
-  ID: number;
-  Title: string;
-  Author: string;
-  Category: string;
+  ID: number;               
+  Title: string;            
+  Author: string;          
+  Category: string;         
   Description: string;
-  StatusId: number;
-  PublishYear: number;
-  AvailableCopies: number;
-  LocationId: number;
-  StatusName?: string;
-  LocationName?: string;
+  StatusId: number;         
+  StatusName?: string;      
+  LocationId: number;       
+  LocationName?: string;    
+  PublishYear: number;      
+  AvailableCopies: number;  
+  CreatedAt?: Date;
 }
 
 export interface Status {

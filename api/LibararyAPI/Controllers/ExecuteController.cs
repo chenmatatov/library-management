@@ -3,18 +3,14 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Text.Json;
 
-namespace LibraryAPI.Controllers
+
+namespace LibararyAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/exec")]
     public class ExecuteController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-
-        public ExecuteController(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        private readonly string _connectionString = "Server=localhost\\SQLEXPRESS;Database=LibraryDB;Integrated Security=true;TrustServerCertificate=true;";
 
         [HttpGet]
         public IActionResult Get()
@@ -27,21 +23,28 @@ namespace LibraryAPI.Controllers
         {
             try
             {
-                var connectionString = _configuration.GetConnectionString("DefaultConnection");
+                using var connection = new SqlConnection(_connectionString);
+                using var command = new SqlCommand(request.ProcedureName, connection);
+                command.CommandType = CommandType.StoredProcedure;
 
-                using var connection = new SqlConnection(connectionString);
-                using var command = new SqlCommand(request.ProcedureName, connection)
-                {
-                    CommandType = CommandType.StoredProcedure
-                };
-
+                // ���� �������
+                // ���� �������
                 foreach (var param in request.Parameters)
                 {
                     object value = param.Value;
 
-                    if (value is JsonElement jsonElement)
+                    // ��� JsonElement
+                    if (param.Value is JsonElement jsonElement)
                     {
-                        value = ConvertJsonElement(jsonElement);
+                        value = jsonElement.ValueKind switch
+                        {
+                            JsonValueKind.String => jsonElement.GetString(),
+                            JsonValueKind.Number => jsonElement.GetInt32(),
+                            JsonValueKind.True => true,
+                            JsonValueKind.False => false,
+                            JsonValueKind.Null => DBNull.Value,
+                            _ => jsonElement.ToString()
+                        };
                     }
 
                     command.Parameters.AddWithValue($"@{param.Key}", value ?? DBNull.Value);
@@ -49,7 +52,7 @@ namespace LibraryAPI.Controllers
 
                 await connection.OpenAsync();
 
-                var results = new List<Dictionary<string, object>>();
+                var result = new List<Dictionary<string, object>>();
                 using var reader = await command.ExecuteReaderAsync();
 
                 while (await reader.ReadAsync())
@@ -59,28 +62,15 @@ namespace LibraryAPI.Controllers
                     {
                         row[reader.GetName(i)] = reader.IsDBNull(i) ? null! : reader.GetValue(i);
                     }
-                    results.Add(row);
+                    result.Add(row);
                 }
 
-                return Ok(results);
+                return Ok(result);
             }
             catch (Exception ex)
             {
                 return BadRequest(new { error = ex.Message });
             }
-        }
-
-        private object ConvertJsonElement(JsonElement element)
-        {
-            return element.ValueKind switch
-            {
-                JsonValueKind.String => element.GetString(),
-                JsonValueKind.Number => element.TryGetInt32(out int intValue) ? intValue : element.GetDouble(),
-                JsonValueKind.True => true,
-                JsonValueKind.False => false,
-                JsonValueKind.Null => null,
-                _ => element.ToString()
-            };
         }
     }
 

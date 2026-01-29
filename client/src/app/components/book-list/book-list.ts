@@ -16,7 +16,11 @@ export class BookListComponent implements OnInit {
   searchText: string = '';
   loading: boolean = true;
 
-  constructor(private apiService: ApiService, private router: Router, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private apiService: ApiService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadBooks();
@@ -33,7 +37,18 @@ export class BookListComponent implements OnInit {
       error: (error) => {
         this.loading = false;
         this.books = [
-          { ID: 1, Title: 'ספר בדיקה', Author: 'מחבר בדיקה', Category: 'קטגוריה', Description: 'תיאור', PublishYear: 2024, AvailableCopies: 5, StatusId: 1, LocationId: 1, StatusName: 'זמין' }
+          {
+            ID: 1,
+            Title: 'ספר בדיקה',
+            Author: 'מחבר בדיקה',
+            Category: 'קטגוריה',
+            Description: 'תיאור',
+            PublishYear: 2024,
+            AvailableCopies: 5,
+            StatusId: 1,
+            LocationId: 1,
+            StatusName: 'זמין'
+          }
         ];
       }
     });
@@ -69,7 +84,7 @@ export class BookListComponent implements OnInit {
   getStatusClass(statusId: number): string {
     const statusClasses: { [key: number]: string } = {
       1: 'status-available',
-      2: 'status-unavailable', 
+      2: 'status-unavailable',
       3: 'status-pending'
     };
     return statusClasses[statusId] || 'status-unavailable';

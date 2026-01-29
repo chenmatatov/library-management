@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = 'https://localhost:7141/api/execute';
+  private apiUrl = 'http://localhost:7141/api/exec';
 
   constructor(private http: HttpClient) { }
 
@@ -40,7 +40,8 @@ export class ApiService {
   getLocations(): Observable<any> {
     return this.execute('Locations_GetAll');
   }
-   ChangeStatus(bookid: number,statusid: number): Observable<any> {
-    return this.execute('ChangeStatus', {BookID: bookid,NewStatusID: statusid});
+  ChangeStatus(bookid: number, statusid: number): Observable<any> {
+    return this.execute('ChangeStatus', { BookID: bookid, NewStatusID: statusid });
   }
+
 }

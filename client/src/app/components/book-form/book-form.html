@@ -9,7 +9,7 @@
         <span class="toast-message">{{notificationMessage}}</span>
         <div class="toast-actions">
           @if (notificationType === 'success') {
-            <button type="button" class="toast-btn" (click)="goToBooksList()">חזור לרשימה</button>
+            <button type="button" class="toast-btn" (click)="cancel()">חזור לרשימה</button>
           }
           <button type="button" class="toast-close" (click)="onNotificationClose()">×</button>
         </div>
@@ -23,14 +23,12 @@
         <label for="title">כותרת *</label>
         <input 
           type="text" 
-          id="title"
+          id="title" 
           formControlName="Title" 
-          class="form-input"
+          class="form-input" 
           [class.error]="bookForm.get('Title')?.invalid && bookForm.get('Title')?.touched">
         @if (bookForm.get('Title')?.invalid && bookForm.get('Title')?.touched) {
-          <div class="error-message">
-            נא להכניס כותרת
-          </div>
+          <div class="error-message">נא להכניס כותרת</div>
         }
       </div>
 
@@ -38,14 +36,12 @@
         <label for="author">מחבר *</label>
         <input 
           type="text" 
-          id="author"
+          id="author" 
           formControlName="Author" 
-          class="form-input"
+          class="form-input" 
           [class.error]="bookForm.get('Author')?.invalid && bookForm.get('Author')?.touched">
         @if (bookForm.get('Author')?.invalid && bookForm.get('Author')?.touched) {
-          <div class="error-message">
-            נא להכניס  שם המחבר 
-          </div>
+          <div class="error-message">נא להכניס שם המחבר</div>
         }
       </div>
     </div>
@@ -55,14 +51,12 @@
         <label for="category">קטגוריה *</label>
         <input 
           type="text" 
-          id="category"
+          id="category" 
           formControlName="Category" 
-          class="form-input"
+          class="form-input" 
           [class.error]="bookForm.get('Category')?.invalid && bookForm.get('Category')?.touched">
         @if (bookForm.get('Category')?.invalid && bookForm.get('Category')?.touched) {
-          <div class="error-message">
-           נא להכניס  קטגוריה 
-          </div>
+          <div class="error-message">נא להכניס קטגוריה</div>
         }
       </div>
 
@@ -70,14 +64,12 @@
         <label for="publishYear">שנת הוצאה *</label>
         <input 
           type="number" 
-          id="publishYear"
+          id="publishYear" 
           formControlName="PublishYear" 
-          class="form-input"
+          class="form-input" 
           [class.error]="bookForm.get('PublishYear')?.invalid && bookForm.get('PublishYear')?.touched">
         @if (bookForm.get('PublishYear')?.invalid && bookForm.get('PublishYear')?.touched) {
-          <div class="error-message">
-           נא להכניס שנת הוצאה תקינה 
-          </div>
+          <div class="error-message">נא להכניס שנת הוצאה תקינה</div>
         }
       </div>
     </div>
@@ -85,9 +77,9 @@
     <div class="form-group full-width">
       <label for="description">תיאור</label>
       <textarea 
-        id="description"
+        id="description" 
         formControlName="Description" 
-        class="form-textarea"
+        class="form-textarea" 
         rows="4">
       </textarea>
     </div>
@@ -97,23 +89,18 @@
         <label for="copies">עותקים זמינים *</label>
         <input 
           type="number" 
-          id="copies"
+          id="copies" 
           formControlName="AvailableCopies" 
-          class="form-input"
+          class="form-input" 
           [class.error]="bookForm.get('AvailableCopies')?.invalid && bookForm.get('AvailableCopies')?.touched">
         @if (bookForm.get('AvailableCopies')?.invalid && bookForm.get('AvailableCopies')?.touched) {
-          <div class="error-message">
-           נא להכניס מספר עותקים 
-          </div>
+          <div class="error-message">נא להכניס מספר עותקים</div>
         }
       </div>
 
       <div class="form-group">
         <label for="status">סטטוס *</label>
-        <select 
-          id="status"
-          formControlName="StatusId" 
-          class="form-select">
+        <select id="status" formControlName="StatusId" class="form-select">
           <option value="">בחר סטטוס...</option>
           @for (status of statuses; track status.ID) {
             <option [value]="status.ID">{{ status.Name }}</option>
@@ -124,10 +111,7 @@
 
     <div class="form-group">
       <label for="location">מיקום *</label>
-      <select 
-        id="location"
-        formControlName="LocationId" 
-        class="form-select">
+      <select id="location" formControlName="LocationId" class="form-select">
         <option value="">בחר מיקום...</option>
         @for (location of locations; track location.ID) {
           <option [value]="location.ID">{{ location.LocationName }}</option>
@@ -138,14 +122,11 @@
     <div class="form-actions">
       <button 
         type="submit" 
-        class="btn btn-primary"
+        class="btn btn-primary" 
         [disabled]="!bookForm.valid || loading">
         {{loading ? 'שומר...' : (isEdit ? 'עדכן' : 'הוסף')}}
       </button>
-      <button 
-        type="button" 
-        class="btn btn-secondary"
-        (click)="cancel()">
+      <button type="button" class="btn btn-secondary" (click)="cancel()">
         ביטול
       </button>
     </div>

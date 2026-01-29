@@ -6,7 +6,7 @@
         type="text" 
         [(ngModel)]="searchText" 
         (input)="onSearch()" 
-        placeholder="חיפוש לפי שם או מחבר..."
+        placeholder="חיפוש לפי שם או מחבר..." 
         class="search-input">
       <button (click)="onAdd()" class="add-btn">הוספה</button>
     </div>
@@ -14,72 +14,73 @@
 
   @if (books.length > 0) {
     <div>
-    <table class="books-table">
-      <thead>
-        <tr>
-          <th>כותרת</th>
-          <th>מחבר</th>
-          <th>קטגוריה</th>
-          <th>סטטוס</th>
-          <th>שנת הוצאה</th>
-          <th>עותקים זמינים</th>
-          <th>פעולות</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (book of books; track trackByBookId($index, book)) {
+      <!-- Desktop Table -->
+      <table class="books-table">
+        <thead>
           <tr>
-            <td>{{ book.Title || 'לא זמין' }}</td>
-            <td>{{ book.Author || 'לא זמין' }}</td>
-            <td>{{ book.Category || 'לא זמין' }}</td>
-            <td>{{ book.StatusName || 'לא זמין' }}</td>
-            <td>{{ book.PublishYear || 'לא זמין' }}</td>
-            <td>{{ book.AvailableCopies || 0 }}</td>
-            <td class="actions-cell">
-              <button (click)="onView(book)" class="view-btn">צפייה</button>
-              <button (click)="onEdit(book)" class="edit-btn">עריכה</button>
-            </td>
+            <th>כותרת</th>
+            <th>מחבר</th>
+            <th>קטגוריה</th>
+            <th>סטטוס</th>
+            <th>שנת הוצאה</th>
+            <th>עותקים זמינים</th>
+            <th>פעולות</th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (book of books; track trackByBookId($index, book)) {
+            <tr>
+              <td>{{ book.Title || 'לא זמין' }}</td>
+              <td>{{ book.Author || 'לא זמין' }}</td>
+              <td>{{ book.Category || 'לא זמין' }}</td>
+              <td>{{ book.StatusName || 'לא זמין' }}</td>
+              <td>{{ book.PublishYear || 'לא זמין' }}</td>
+              <td>{{ book.AvailableCopies || 0 }}</td>
+              <td class="actions-cell">
+                <button (click)="onView(book)" class="view-btn">צפייה</button>
+                <button (click)="onEdit(book)" class="edit-btn">עריכה</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
 
-    <div class="books-mobile">
-      @for (book of books; track trackByBookId($index, book)) {
-        <div class="book-card">
-          <div class="book-card-header">
-            <div>
-              <h3 class="book-title">{{ book.Title || 'לא זמין' }}</h3>
-              <p class="book-author">מחבר: {{ book.Author || 'לא זמין' }}</p>
+      <!-- Mobile Cards -->
+      <div class="books-mobile">
+        @for (book of books; track trackByBookId($index, book)) {
+          <div class="book-card">
+            <div class="book-card-header">
+              <div>
+                <h3 class="book-title">{{ book.Title || 'לא זמין' }}</h3>
+                <p class="book-author">מחבר: {{ book.Author || 'לא זמין' }}</p>
+              </div>
+              <span class="book-status" [class]="getStatusClass(book.StatusId)">
+                {{ book.StatusName || 'לא זמין' }}
+              </span>
             </div>
-            <span class="book-status" 
-                  [class]="getStatusClass(book.StatusId)">
-              {{ book.StatusName || 'לא זמין' }}
-            </span>
+
+            <div class="book-details">
+              <div class="book-detail">
+                <label>קטגוריה:</label>
+                <span>{{ book.Category || 'לא זמין' }}</span>
+              </div>
+              <div class="book-detail">
+                <label>שנת הוצאה:</label>
+                <span>{{ book.PublishYear || 'לא זמין' }}</span>
+              </div>
+              <div class="book-detail">
+                <label>עותקים זמינים:</label>
+                <span>{{ book.AvailableCopies || 0 }}</span>
+              </div>
+            </div>
+
+            <div class="book-actions">
+              <button (click)="onView(book)" class="mobile-btn mobile-view-btn">צפייה</button>
+              <button (click)="onEdit(book)" class="mobile-btn mobile-edit-btn">עריכה</button>
+            </div>
           </div>
-          
-          <div class="book-details">
-            <div class="book-detail">
-              <label>קטגוריה:</label>
-              <span>{{ book.Category || 'לא זמין' }}</span>
-            </div>
-            <div class="book-detail">
-              <label>שנת הוצאה:</label>
-              <span>{{ book.PublishYear || 'לא זמין' }}</span>
-            </div>
-            <div class="book-detail">
-              <label>עותקים זמינים:</label>
-              <span>{{ book.AvailableCopies || 0 }}</span>
-            </div>
-          </div>
-          
-          <div class="book-actions">
-            <button (click)="onView(book)" class="mobile-btn mobile-view-btn">צפייה</button>
-            <button (click)="onEdit(book)" class="mobile-btn mobile-edit-btn">עריכה</button>
-          </div>
-        </div>
-      }
-    </div>
+        }
+      </div>
     </div>
   }
 
